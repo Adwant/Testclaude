@@ -41,3 +41,18 @@
 
 `assets/img_*.png` — рендеры экранов продукта, подготовленные под соответствующие
 плейсхолдер-фреймы в Figma. Имя файла = имя фрейма (`img:step1`, `img:send`, …).
+
+### Соответствие файлов и плейсхолдеров
+
+| Файл | Фрейм | Слайд | Размер | Соотношение |
+|---|---|---|---|---|
+| `img_step1__skazhite-spasibo.png` | `img:step1` | 01 обложка | 600×348 | 1.724 |
+| `img_step1__skazhite-spasibo.png` | `img:step1` | 04 шаг 1 | 536×311 | 1.723 |
+| `img_step2__podkrepite-byudzhetom.png` | `img:step2` | 04 шаг 2 | 536×311 | 1.723 |
+| `img_step3__kollega-potratit.png` | `img:step3` | 04 шаг 3 | 536×311 | 1.723 |
+| `img_send__ekran-otpravki.png` | `img:send` | 05 отправка | 924×680 | 1.359 |
+| `img_search__poisk-kollegi.png` | `img:search` | 06 поиск | 880×634 | 1.388 |
+| `img_feed__lenta-blagodarnostey.png` | `img:feed` | 07 получатель | 1044×654 | 1.596 |
+
+Пропорции файлов совпадают с пропорциями фреймов, поэтому при перетаскивании
+изображение встаёт в кадр без обрезки.
