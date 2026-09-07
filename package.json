@@ -1,0 +1,26 @@
+{
+  "name": "testclaude",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adwant/Testclaude.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adwant/Testclaude/issues"
+  },
+  "homepage": "https://github.com/Adwant/Testclaude#readme",
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  },
+  "private": true
+}
