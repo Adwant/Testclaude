@@ -1,0 +1,398 @@
+<title>Sportika Круги</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;650;700&display=swap">
+<style>
+/* Layout: тёмный борд, экраны 393×852 в потоке, шапка с правилом «одна из трёх закрывает день».
+   Палитра и форма взяты из макетов «Круги»: крем, оранж, зелёный, чёрный; пончик, шарик, уровень. */
+:root{
+  --board:#3b3b3a; --board-2:#2f2f2e; --on-board:#ece8de; --on-board-mute:#a29d90;
+  --cream:#e9e5db; --sand:#d6d1c4; --orange:#f04b23; --orange-dk:#c63a16; --red-dk:#a0180a;
+  --green:#7dd668; --green-dk:#69b759; --ink:#111; --paper:#f6f3eb; --mute:#8a8477;
+  --font:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+  --z:1;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--board);color:var(--on-board);font-family:var(--font);padding-inline:16px;padding-block:40px 64px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1900px;margin:0 auto}
+header.top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px 64px;align-items:end;margin-bottom:56px}
+@media(max-width:900px){header.top{grid-template-columns:minmax(0,1fr)}}
+.eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-board-mute);margin:0 0 16px}
+h1{font-size:clamp(40px,7vw,96px);line-height:.95;letter-spacing:-.045em;font-weight:700;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--orange)}
+.lead{font-size:18px;line-height:1.45;color:var(--on-board);max-width:56ch;margin:0 0 12px}
+.lead b{color:var(--orange);font-weight:600}
+.rule{background:var(--board-2);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:20px}
+.rule h2{margin:0;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-board-mute);font-weight:600}
+.states{display:flex;flex-wrap:wrap;gap:20px 28px}
+.state{display:flex;flex-direction:column;align-items:flex-start;gap:8px;font-size:13px;color:var(--on-board-mute);line-height:1.3;min-width:0;width:84px}
+.state b{color:var(--on-board);font-weight:600;font-size:14px}
+.rule p{margin:0;font-size:14px;line-height:1.45;color:var(--on-board-mute);max-width:60ch}
+.rule p b{color:var(--on-board);font-weight:600}
+.group{margin-top:64px}
+.group>h2{font-size:28px;letter-spacing:-.03em;margin:0 0 6px;font-weight:700}
+.group>p{margin:0 0 28px;color:var(--on-board-mute);font-size:15px;max-width:70ch;line-height:1.45}
+.row{display:flex;flex-wrap:wrap;gap:40px 36px}
+.cell{width:calc(393px*var(--z));min-width:0}
+.cap{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;padding-inline:4px;min-height:74px}
+.cap span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.cap b{font-size:20px;letter-spacing:-.02em;font-weight:650}
+.cap i{font-style:normal;font-size:13px;line-height:1.4;color:var(--on-board-mute)}
+.scale{zoom:var(--z)}
+
+/* phone */
+.phone{position:relative;width:393px;height:852px;border-radius:54px;overflow:hidden;font-family:var(--font);letter-spacing:-.01em;user-select:none}
+.phone svg{display:block}
+.sb-time{position:absolute;left:48px;top:14px;font-size:17px;font-weight:600}
+.island{position:absolute;left:134.5px;top:11px;width:124px;height:36px;border-radius:20px;background:#000}
+.home{position:absolute;left:129.5px;bottom:9px;width:134px;height:5px;border-radius:3px}
+.a{position:absolute}
+.h1{font-size:30px;line-height:32px;font-weight:700;letter-spacing:-.035em}
+.h1.xl{font-size:44px;line-height:44px;letter-spacing:-.045em}
+.tiny{font-size:11px;font-weight:600}
+.lbl{font-size:13px}
+.big{font-size:84px;line-height:76px;font-weight:500;letter-spacing:-.05em;text-align:right;font-variant-numeric:tabular-nums}
+.mid{font-size:24px;line-height:28px;font-weight:500;letter-spacing:-.03em}
+.date{font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center}
+
+/* flow screens */
+.flow{position:absolute;inset:0;padding:66px 20px 0;display:flex;flex-direction:column}
+.pill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:14px;font-size:12px;font-weight:600;white-space:nowrap}
+.coin{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px 0 8px;border-radius:14px;background:var(--ink);color:var(--cream);font-size:13px;font-weight:600}
+.coin::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--orange)}
+.card{background:var(--paper);border-radius:28px;padding:16px 18px}
+.card h3{margin:0 0 8px;font-size:16px;letter-spacing:-.02em;font-weight:650}
+.kv{display:flex;gap:14px;justify-content:space-between;align-items:baseline;padding:9px 0;border-top:1px solid rgba(17,17,17,.11);font-size:14px;line-height:1.25}
+.kv:first-of-type{border-top:0}
+.kv span{color:var(--mute);flex:0 0 42%}
+.kv b{font-weight:600;text-align:right;flex:1;min-width:0}
+.note{font-size:12.5px;line-height:1.4;color:var(--mute)}
+.cta{position:absolute;left:20px;right:20px;bottom:34px;height:54px;border-radius:27px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:650;letter-spacing:-.01em}
+.nav{display:flex;align-items:center;justify-content:space-between;height:44px;margin-bottom:10px}
+.nav .back{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.nav b{font-size:16px;font-weight:650}
+.nav .sp{width:40px}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:92px;padding:10px 12px 0;display:flex;justify-content:space-around;border-top:1px solid rgba(17,17,17,.13)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:600;width:80px;color:var(--mute)}
+.tab.on{color:var(--ink)}
+.seg{display:flex;padding:4px;border-radius:24px;background:var(--sand);gap:2px}
+.seg div{flex:1;text-align:center;height:34px;line-height:34px;border-radius:20px;font-size:13px;font-weight:600;color:#5f5a4e}
+.seg .on{background:var(--ink);color:var(--cream)}
+.sec{font-size:17px;font-weight:700;letter-spacing:-.025em;margin:18px 2px 10px}
+.chal{border-radius:28px;background:var(--paper);overflow:hidden}
+.chal .art{height:104px;position:relative;overflow:hidden}
+.chal .in{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+.chal .t{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.chal .t b{font-size:18px;line-height:21px;letter-spacing:-.03em;font-weight:700;flex:1;min-width:0}
+.trow{display:flex;gap:14px;align-items:center;padding:14px 16px}
+.trow b{display:block;font-size:16px;letter-spacing:-.02em;font-weight:650}
+.trow small{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+.trow div{flex:1;min-width:0}
+.sets{display:flex;flex-direction:column}
+.mrow{display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid rgba(17,17,17,.2)}
+.mrow:first-child{border-top:0}
+.mrow b{font-size:17px;font-weight:650;letter-spacing:-.02em;display:block}
+.mrow small{font-size:12px;opacity:.65;display:block;margin-top:1px}
+.mrow .r{margin-left:auto;text-align:right;font-size:22px;font-weight:600;letter-spacing:-.03em}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <p class="eyebrow">Sportika · концепт визуального языка</p>
+    <h1>Три метрики.<br><em>Одна</em> закрывает день.</h1>
+  </div>
+  <div>
+    <p class="lead">Круг — единственная фигура интерфейса. Метрика — это то, как круг заполняется: <b>пончик</b> для шагов, <b>шарик</b> для калорий, <b>уровень</b> для дистанции.</p>
+    <p class="lead">Человек может закрыть любую одну метрику из трёх и получить награду за день. Этот же день заливается целиком и идёт в недельный страйк.</p>
+  </div>
+</header>
+
+<section class="rule">
+  <h2>Как читается кружок дня</h2>
+  <div class="states" id="states"></div>
+  <p><b>Кружок заливается снизу по лучшей из трёх метрик.</b> Как только любая достигла цели, кружок залит полностью, а внутри остаётся знак той метрики, которая его закрыла. Награда за день и заполненный день недели приходят вместе.</p>
+</section>
+
+<div id="groups"></div>
+</div>
+
+<script>
+const C={cream:'#e9e5db',sand:'#d6d1c4',orange:'#f04b23',odk:'#c63a16',red:'#a0180a',green:'#7dd668',gdk:'#69b759',ink:'#111',paper:'#f6f3eb',mute:'#8a8477',white:'#fbfaf6'};
+const TH={
+  cream:{bg:C.cream,fg:C.ink,empty:C.sand,today:C.orange,accent:C.orange,onAccent:C.white,line:'rgba(17,17,17,.14)'},
+  orange:{bg:C.orange,fg:C.ink,empty:C.odk,today:C.white,accent:C.ink,onAccent:C.orange,line:'rgba(17,17,17,.22)'},
+  green:{bg:C.green,fg:C.ink,empty:C.gdk,today:C.orange,accent:C.ink,onAccent:C.green,line:'rgba(17,17,17,.18)'}
+};
+let uid=0;
+const nb=s=>String(s).replace(/ /g,' ');
+
+/* знаки метрик: шаги — кольцо, калории — шарик, дистанция — уровень */
+function glyph(t,s,c){
+  const m=s/2;
+  if(t==='steps')return `<circle cx="${m}" cy="${m}" r="${s*.2}" fill="none" stroke="${c}" stroke-width="${s*.11}"/>`;
+  if(t==='kcal')return `<circle cx="${s*.43}" cy="${s*.6}" r="${s*.14}" fill="${c}"/>`;
+  const r=s*.25;
+  return `<path d="M${m-r} ${m} A${r} ${r} 0 0 0 ${m+r} ${m}Z" fill="${c}"/><circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${c}" stroke-width="${s*.04}"/>`;
+}
+function svg(sz,body){return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">${body}</svg>`}
+/* кружок дня: заливка снизу по p, при p>=1 внутри знак закрывшей метрики */
+function dayDot(sz,p,th,o={}){
+  const r=sz/2,id='k'+(++uid);
+  if(o.today){
+    let b=`<circle cx="${r}" cy="${r}" r="${r}" fill="${th.today}"/>`;
+    if(o.g)b+=glyph(o.g,sz,th.bg);
+    return svg(sz,b);
+  }
+  let b=`<circle cx="${r}" cy="${r}" r="${r}" fill="${th.empty}" ${p<=0?'opacity=".5"':''}/>`;
+  if(p>0){
+    const y=sz*(1-Math.min(p,1));
+    b+=`<clipPath id="${id}"><circle cx="${r}" cy="${r}" r="${r}"/></clipPath><rect x="0" y="${y}" width="${sz}" height="${sz-y}" fill="${th.fg}" clip-path="url(#${id})"/>`;
+  }
+  if(p>=1&&o.g)b+=glyph(o.g,sz,th.empty);
+  return svg(sz,b);
+}
+function mini(t,on,th){
+  const bg=on?th.accent:th.fg, op=on?1:.28;
+  return svg(28,`<circle cx="14" cy="14" r="14" fill="${bg}" opacity="${op}"/>${glyph(t,28,on?th.onAccent:th.bg)}`);
+}
+const dayLbl=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+function statusBar(th){return `<div class="sb-time">9:41</div><div class="island"></div><div class="home" style="background:${th.fg}"></div>`}
+
+/* полоса из семи дней, последний — сегодня (пт 25) */
+function strip(th,todayClosed,todayG){
+  const d=[[19,'Сб',.7,null],[20,'Вс',.3,null],[21,'Пн',1,'steps'],[22,'Вт',.85,null],[23,'Ср',1,'kcal'],[24,'Чт',1,'dist']];
+  let h='';
+  d.forEach(([n,l,p,g],i)=>{
+    const x=32+i*48;
+    h+=`<div class="a tiny" style="left:${x}px;top:150px;width:41px;text-align:center;opacity:.7">${l}</div>`;
+    h+=`<div class="a" style="left:${x}px;top:168px">${dayDot(41,p,th,{g})}</div>`;
+    h+=`<div class="a tiny" style="left:${x}px;top:215px;width:41px;text-align:center;opacity:.6">${n}</div>`;
+  });
+  const x=32+6*48;
+  h+=`<div class="a tiny" style="left:${x}px;top:150px;width:41px;text-align:center">Пт</div>`;
+  h+=`<div class="a" style="left:${x}px;top:168px">${dayDot(41,0,th,{today:1,g:todayClosed?todayG:null})}</div>`;
+  h+=`<div class="a tiny" style="left:${x}px;top:215px;width:41px;text-align:center">25</div>`;
+  return h;
+}
+function homeHead(th,title){
+  return `<div class="a h1" style="left:32px;top:64px;width:200px">${title}</div>
+  <div class="a date" style="right:32px;top:70px">пт, 25 сент <svg width="14" height="8" viewBox="0 0 14 8"><path d="M1 1l6 6 6-6" fill="none" stroke="${th.fg}" stroke-width="2"/></svg></div>`;
+}
+function homeBottom(th,active){
+  const ico=['steps','kcal','dist'].map((t,i)=>`<div class="a" style="left:${240+i*42}px;top:748px">${mini(t,t===active,th)}</div>`).join('');
+  return `<div class="a" style="left:0;right:0;top:680px;height:1px;background:${th.line}"></div>
+  <div class="a" style="left:196px;top:680px;bottom:0;width:1px;background:${th.line}"></div>
+  <div class="a" style="left:40px;top:704px;width:116px;height:116px;border-radius:50%;background:${th.accent};color:${th.onAccent};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px">Ещё</div>${ico}`;
+}
+function statPill(th,text){
+  return `<div class="a pill" style="left:32px;top:252px;background:${th.fg};color:${th.bg};z-index:2">${text}</div>`;
+}
+
+/* ---- художественные вставки ---- */
+function donut(pct){
+  const R=110,sw=100,cx=160,a=Math.min(pct-1,1)*2*Math.PI;
+  const ex=cx+R*Math.sin(a),ey=cx-R*Math.cos(a);
+  return `<svg width="320" height="320" viewBox="0 0 320 320">
+   <circle cx="160" cy="160" r="${R}" fill="none" stroke="${C.orange}" stroke-width="${sw}"/>
+   <path d="M160 ${160-R} A${R} ${R} 0 ${a>Math.PI?1:0} 1 ${ex} ${ey}" fill="none" stroke="${C.red}" stroke-width="${sw}" stroke-linecap="round"/>
+   <circle cx="160" cy="${160-R}" r="${sw/2}" fill="${C.orange}"/>
+   <circle cx="160" cy="160" r="60" fill="${C.cream}"/>
+  </svg>`;
+}
+function ball(rem){
+  const d=320*rem/2;
+  return `<svg width="320" height="320" viewBox="0 0 320 320"><circle cx="160" cy="160" r="160" fill="${C.ink}"/><circle cx="${160-70}" cy="${160+70}" r="${d}" fill="${C.orange}"/></svg>`;
+}
+function level(p){
+  const y=320*(1-p),id='lv'+(++uid);
+  return `<svg width="320" height="320" viewBox="0 0 320 320"><clipPath id="${id}"><circle cx="160" cy="160" r="160"/></clipPath>
+  <circle cx="160" cy="160" r="160" fill="${C.gdk}"/><rect x="0" y="${y}" width="320" height="${320-y}" fill="${C.ink}" clip-path="url(#${id})"/>
+  <circle cx="230" cy="${y-18}" r="18" fill="${C.orange}"/></svg>`;
+}
+
+/* ---- экраны ---- */
+const S={};
+S.steps=()=>{const th=TH.cream;return `${statusBar(th)}${homeHead(th,'Шаги<br>сегодня')}${strip(th,true,'steps')}
+  <div class="a" style="left:36.5px;top:250px">${donut(1.24)}</div>
+  <div class="a" style="left:36.5px;top:250px;width:320px;height:320px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;line-height:1.05"><b style="font-size:30px;letter-spacing:-.04em;font-weight:700">124%</b><span class="tiny" style="margin-top:2px">день закрыт</span></div>
+  <div class="a lbl" style="left:32px;top:596px;opacity:.6">сверх цели</div>
+  <div class="a mid" style="left:32px;top:618px">+2 400</div>
+  <div class="a big" style="right:32px;top:578px">${nb('12 400')}</div>
+  ${homeBottom(th,'steps')}`};
+S.kcal=()=>{const th=TH.orange;return `${statusBar(th)}${homeHead(th,'Калории<br>сегодня')}${strip(th,false)}
+  <div class="a" style="left:36.5px;top:250px">${ball(.24)}</div>
+  <div class="a tiny" style="left:36.5px;top:250px;width:320px;text-align:center;padding-top:60px;color:${C.orange};letter-spacing:.06em;text-transform:uppercase">цель 500 ккал</div>
+  <div class="a lbl" style="left:32px;top:596px;opacity:.65">осталось</div>
+  <div class="a mid" style="left:32px;top:618px">120 ккал</div>
+  <div class="a big" style="right:32px;top:578px">380</div>
+  ${homeBottom(th,'kcal')}`};
+S.dist=()=>{const th=TH.green;return `${statusBar(th)}${homeHead(th,'Дистанция<br>сегодня')}${strip(th,false)}
+  <div class="a" style="left:36.5px;top:250px">${level(.65)}</div>
+  <div class="a lbl" style="left:32px;top:596px;opacity:.65">осталось</div>
+  <div class="a mid" style="left:32px;top:618px">2,8 км</div>
+  <div class="a big" style="right:32px;top:578px">${nb('5,2 км').replace('км','<span style="font-size:.7em">км</span>')}</div>
+  ${homeBottom(th,'dist')}`};
+
+S.reward=()=>{const th=TH.orange;
+  const rows=[['steps','Шаги','12 400 · цель 10 000','124%',1],['kcal','Калории','380 · цель 500','76%',0],['dist','Дистанция','5,2 км · цель 8 км','65%',0]];
+  const wk=[1,.85,1,1,'t',0,0];
+  return `${statusBar(th)}
+  <div class="flow" style="padding-top:70px">
+   <div class="tiny" style="letter-spacing:.14em;text-transform:uppercase;opacity:.65">пт, 25 сентября</div>
+   <div class="h1 xl" style="margin-top:8px">День<br>закрыт</div>
+   <div style="position:relative;margin:18px auto 0;width:268px;height:268px">
+     <svg width="268" height="268" viewBox="0 0 268 268"><circle cx="134" cy="134" r="134" fill="${C.ink}"/><circle cx="218" cy="42" r="26" fill="${C.cream}"/></svg>
+     <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:${C.orange}">
+       <div style="font-size:92px;line-height:88px;font-weight:600;letter-spacing:-.06em">+50</div>
+       <div style="font-size:14px;font-weight:600;color:${C.cream};margin-top:8px">спорткоинов за день</div>
+     </div>
+   </div>
+   <div style="margin-top:22px">${rows.map(([g,n,v,p,c])=>`<div class="mrow" style="opacity:${c?1:.72}">${svg(34,`<circle cx="17" cy="17" r="17" fill="${c?C.ink:C.odk}"/>${glyph(g,34,c?C.orange:C.orange)}`)}<div><b>${n}</b><small>${v}</small></div><div class="r">${c?`<span class="pill" style="background:${C.ink};color:${C.orange};height:22px;font-size:11px;margin-right:8px;vertical-align:4px">закрыл</span>`:''}${p}</div></div>`).join('')}</div>
+   <div style="display:flex;gap:6px;margin-top:20px;align-items:center">${wk.map((p,i)=>`<div style="text-align:center"><div class="tiny" style="opacity:.6;margin-bottom:4px">${dayLbl[i]}</div>${p==='t'?dayDot(36,0,th,{today:1,g:'steps'}):dayDot(36,p,th,{g:i==0?'steps':i==2?'kcal':i==3?'dist':null})}</div>`).join('')}<div style="margin-left:auto;font-size:12.5px;line-height:1.25;font-weight:600;text-align:right;white-space:nowrap">4 из 5<br><span style="opacity:.65;font-weight:500">в серии</span></div></div>
+  </div>
+  <div class="cta" style="background:${C.ink};color:${C.orange}">Дальше</div>`};
+
+S.week=()=>{const th=TH.cream;
+  const days=[['Пн',1,'steps'],['Вт',.85,null],['Ср',1,'kcal'],['Чт',1,'dist'],['Пт','t','steps'],['Сб',0,null],['Вс',0,null]];
+  const R=112,cx=160,cy=160,D=58;
+  let ring='';
+  days.forEach(([l,p,g],i)=>{
+    const a=(i/7)*2*Math.PI, x=cx+R*Math.sin(a)-D/2, y=cy-R*Math.cos(a)-D/2;
+    ring+=`<div class="a" style="left:${x}px;top:${y}px;width:${D}px;height:${D}px">${p==='t'?dayDot(D,0,th,{today:1,g}):dayDot(D,p,th,{g})}</div>`;
+    const lx=cx+(R+52)*Math.sin(a)-14, ly=cy-(R+52)*Math.cos(a)-7;
+    ring+=`<div class="a tiny" style="left:${lx}px;top:${ly}px;width:28px;text-align:center;opacity:.65">${l}</div>`;
+  });
+  return `${statusBar(th)}
+  <div class="flow" style="padding-top:64px">
+   <div class="h1" style="font-size:34px;line-height:36px">Серия<br>недели</div>
+   <div class="tiny" style="margin-top:8px;opacity:.6;letter-spacing:.06em">21 – 27 СЕНТЯБРЯ</div>
+   <div style="position:relative;width:320px;height:320px;margin:36px auto 0">${ring}
+     <div class="a" style="inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1">
+       <div style="font-size:104px;font-weight:500;letter-spacing:-.07em;line-height:92px">4</div>
+       <div style="font-size:15px;font-weight:600;margin-top:6px">из 5 дней</div>
+     </div>
+   </div>
+   <div class="card" style="margin-top:30px;background:${C.ink};color:${C.cream};display:flex;gap:14px;align-items:center;padding:16px 18px">
+     ${svg(44,`<circle cx="22" cy="22" r="22" fill="${C.orange}"/><path d="M14 23l6 6 11-13" fill="none" stroke="${C.ink}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>`)}
+     <div style="flex:1;min-width:0"><b style="display:block;font-size:17px;letter-spacing:-.02em">Ещё один день</b><span style="font-size:13px;opacity:.7;line-height:1.35;display:block;margin-top:2px">и серия недели: +200 спорткоинов. Подойдёт любая метрика.</span></div>
+   </div>
+   <div class="note" style="margin-top:14px;padding-inline:4px">День с частичным кружком в серию не входит, пока одна из метрик не достигла цели.</div>
+  </div>`};
+
+S.month=()=>{const th=TH.cream;
+  const P=[1,.85,.6,1,.4,1,1,.75,.9,1,.2,.55,1,1,.8,1,.45,1,.7,.3,1,.85,1,1];
+  const G={1:'steps',4:'kcal',6:'steps',7:'dist',10:'steps',13:'kcal',14:'steps',16:'dist',18:'steps',21:'steps',23:'kcal',24:'dist'};
+  let cells='';
+  for(let n=1;n<=30;n++){
+    const idx=n-1+0; const col=((n-1)+1)%7; const row=Math.floor(((n-1)+1)/7); // 1 сент 2026 = вт
+    const x=32+col*48, y=406+row*48;
+    let d;
+    if(n<=24)d=dayDot(41,P[n-1],th,{g:G[n]});
+    else if(n===25)d=dayDot(41,0,th,{today:1,g:'steps'});
+    else d=dayDot(41,0,th);
+    cells+=`<div class="a" style="left:${x}px;top:${y}px">${d}</div>`;
+  }
+  const wd=dayLbl.map((l,i)=>`<div class="a tiny" style="left:${32+i*48}px;top:384px;width:41px;text-align:center;opacity:.55">${l}</div>`).join('');
+  const s=(t,v,u)=>`<div style="display:flex;gap:8px;align-items:center;flex:1;min-width:0">${mini(t,t==='steps',th)}<div style="line-height:1.15"><b style="font-size:15px;font-weight:650">${v}</b><div class="tiny" style="opacity:.6;font-weight:500">${u}</div></div></div>`;
+  return `${statusBar(th)}
+  <div class="a" style="left:22px;top:88px;font-size:190px;line-height:190px;font-weight:700;letter-spacing:-.08em;color:${C.orange}">25</div>
+  <div class="a" style="left:32px;top:302px;font-size:24px;line-height:30px;font-weight:700;letter-spacing:-.03em;text-transform:uppercase">Сентябрь<br><span style="color:${C.mute};font-weight:500">2026</span></div>
+  <div class="a" style="right:32px;top:302px;font-size:24px;line-height:30px;font-weight:700;color:${C.mute}">ПТ</div>
+  ${wd}${cells}
+  <div class="a" style="left:32px;right:32px;top:664px;height:1px;background:${th.line}"></div>
+  <div class="a" style="left:32px;right:32px;top:680px;display:flex;gap:6px">${s('steps',nb('12 400'),'шагов · 124%')}${s('kcal','380','ккал · 76%')}${s('dist','5,2','км · 65%')}</div>
+  <div class="a note" style="left:32px;right:32px;top:750px">Кружок залит по лучшей из трёх метрик. Знак внутри показывает, какая закрыла день. Тап по дню меняет главный экран на этот день.</div>`};
+
+const artOrange=()=>svg(104,'').replace('</svg>','')+'';
+function artRing(){return `<div class="art" style="background:${C.orange}"><svg width="326" height="104" viewBox="0 0 326 104"><circle cx="250" cy="52" r="66" fill="none" stroke="${C.red}" stroke-width="40"/><circle cx="250" cy="52" r="66" fill="none" stroke="${C.ink}" stroke-width="40" stroke-dasharray="290 414" transform="rotate(-90 250 52)" stroke-linecap="round"/><circle cx="60" cy="52" r="28" fill="${C.cream}"/></svg></div>`}
+function artLevel(){return `<div class="art" style="background:${C.green}"><svg width="326" height="104" viewBox="0 0 326 104"><clipPath id="al"><circle cx="230" cy="52" r="92"/></clipPath><circle cx="230" cy="52" r="92" fill="${C.gdk}"/><rect x="130" y="40" width="200" height="120" fill="${C.ink}" clip-path="url(#al)"/><circle cx="270" cy="26" r="14" fill="${C.orange}"/></svg></div>`}
+function artSix(){let c='';for(let i=0;i<6;i++)c+=`<circle cx="${40+i*52}" cy="52" r="20" fill="${i<3?C.orange:'#3a3a38'}"/>`;return `<div class="art" style="background:${C.ink}"><svg width="326" height="104" viewBox="0 0 326 104">${c}</svg></div>`}
+
+const tabbar=(on)=>`<div class="tabbar" style="background:${C.cream}">${[['Главная','steps'],['Задания','dist'],['Активность','kcal'],['Призы','coin']].map(([n,g],i)=>`<div class="tab ${i===on?'on':''}">${svg(28,`<circle cx="14" cy="14" r="14" fill="${i===on?C.ink:C.sand}"/>${g==='coin'?`<circle cx="14" cy="14" r="5" fill="${i===on?C.orange:C.cream}"/>`:glyph(g,28,i===on?C.orange:C.cream)}`)}${n}</div>`).join('')}</div>`;
+const back=`<div class="nav"><div class="back">${svg(24,'<path d="M15 5l-7 7 7 7M8 12h13" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>')}</div><b>Челлендж</b><div class="sp"></div></div>`;
+
+S.tasks=()=>{const th=TH.cream;return `${statusBar(th)}
+  <div class="flow" style="padding-top:60px;padding-inline:16px">
+   <div class="h1" style="font-size:34px;line-height:36px;margin:0 0 14px 4px">Задания</div>
+   <div class="seg"><div class="on">Доступные</div><div>Активные</div><div>Завершённые</div></div>
+   <div class="sec">Короткие вызовы</div>
+   <div class="card" style="padding:0"><div class="trow">${svg(52,`<circle cx="26" cy="26" r="26" fill="${C.ink}"/>${glyph('steps',52,C.orange)}`)}<div><b>Пройти 12 000 шагов</b><small>Сегодня · короткий вызов</small></div><span class="coin">+30</span></div></div>
+   <div class="sec">Длинные челленджи</div>
+   <div class="chal">${artRing()}<div class="in"><div class="t"><b>10 000 шагов каждый день</b><span class="pill" style="background:${C.green};color:${C.ink}">Вход бесплатный</span></div><div class="note">Регулярный · 7 дней · допустимо 2 пропуска</div><div style="display:flex;justify-content:space-between;align-items:center"><span class="note">Начать можно сегодня</span><span class="coin">+500</span></div></div></div>
+   <div class="chal" style="margin-top:12px">${artLevel()}<div class="in"><div class="t"><b>Марафон 100 км за месяц</b><span class="pill" style="background:${C.sand}">Вход 100</span></div></div></div>
+  </div>${tabbar(1)}`};
+
+S.card=()=>{const th=TH.cream;
+  const kv=[['Вид','регулярное выполнение'],['Период','25 сентября – 1 октября'],['Условие','не менее 10 000 шагов в день'],['Пропуски','2 дня из 7'],['Вход','без взноса'],['Награда','+500 спорткоинов']];
+  return `${statusBar(th)}
+  <div class="flow" style="padding-top:58px;padding-inline:16px">${back}
+   <div class="chal" style="border-radius:28px">${artRing().replace('height:104px','')}</div>
+   <div class="h1" style="margin:16px 4px 10px;font-size:32px;line-height:34px">10 000 шагов<br>каждый день</div>
+   <div style="display:flex;gap:8px;margin:0 4px 14px"><span class="pill" style="background:${C.green}">Вход бесплатный</span><span class="coin">+500</span></div>
+   <div class="card"><h3>Настройки челленджа</h3><div class="sets">${kv.map(([a,b])=>`<div class="kv"><span>${a}</span><b>${b}</b></div>`).join('')}</div></div>
+   <div class="note" style="margin:12px 4px 0">Открытие карточки не начинает участие. Награда челленджа не заменяет цель дня.</div>
+  </div>
+  <div class="cta" style="background:${C.ink};color:${C.cream}">Начать челлендж</div>`};
+
+S.active=()=>{const th=TH.cream;
+  const d=[[19,'d'],[20,'d'],[21,'s'],[22,'d'],[23,'d'],[24,'d'],[25,'t']];
+  const chip=([n,k])=>{
+    const inner=k==='d'?`<circle cx="21" cy="21" r="21" fill="${C.ink}"/><path d="M12 22l6 6 12-13" fill="none" stroke="${C.cream}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`
+     :k==='s'?`<circle cx="21" cy="21" r="21" fill="${C.sand}"/><path d="M13 21h16" stroke="${C.mute}" stroke-width="3" stroke-linecap="round"/>`
+     :`<circle cx="21" cy="21" r="19" fill="${C.cream}" stroke="${C.orange}" stroke-width="4"/><circle cx="21" cy="21" r="7" fill="${C.orange}"/>`;
+    return `<div style="text-align:center"><div class="tiny" style="opacity:.6;margin-bottom:5px">${n}</div>${svg(42,inner)}</div>`;
+  };
+  return `${statusBar(th)}
+  <div class="flow" style="padding-top:58px;padding-inline:16px">${back}
+   <div class="h1" style="margin:6px 4px 0;font-size:24px;line-height:26px">10 000 шагов каждый день</div>
+   <div style="display:flex;align-items:flex-end;gap:12px;margin:14px 4px 0"><div style="font-size:112px;line-height:96px;font-weight:500;letter-spacing:-.07em">5</div><div style="padding-bottom:6px;font-size:17px;line-height:1.15;font-weight:600">из 7 дней<br><span style="opacity:.6;font-weight:500;font-size:14px">зачтено</span></div></div>
+   <div style="display:flex;justify-content:space-between;margin:22px 2px 0">${d.map(chip).join('')}</div>
+   <div class="card" style="margin-top:22px"><div class="sets">
+     <div class="kv"><span>Использованные пропуски</span><b style="color:${C.red}">1 из 2</b></div>
+     <div class="kv"><span>Осталось времени</span><b>сегодня последний день</b></div>
+     <div class="kv"><span>Сегодня</span><b>9 240 из 10 000 шагов</b></div></div>
+     <div class="note" style="margin-top:6px">Допустимый пропуск не становится выполненным днём, но и не проваливает челлендж.</div></div>
+   <div class="card" style="margin-top:12px;background:${C.sand};display:flex;gap:12px;align-items:flex-start">${svg(22,`<circle cx="11" cy="11" r="11" fill="${C.orange}"/>`)}<div><b style="font-size:14px;display:block;margin-bottom:2px">Задержка данных — не пропуск</b><span class="note" style="color:#5f5a4e">Пока синхронизация не завершилась, день показывается как ожидание.</span></div></div>
+  </div>`};
+
+S.done=()=>{const th=TH.green;
+  const kv=[['Зачтённые дни','6 из 7'],['Использованные пропуски','1 из 2'],['Награда','начислена']];
+  return `${statusBar(th)}
+  <div class="flow" style="padding-top:60px;padding-inline:20px">
+   <div class="pill" style="background:${C.ink};color:${C.green};align-self:flex-start">Челлендж выполнен</div>
+   <div class="h1 xl" style="margin-top:12px;font-size:36px;line-height:38px">10 000 шагов<br>каждый день</div>
+   <div style="position:relative;margin:20px auto 0;width:252px;height:252px">
+     <svg width="252" height="252" viewBox="0 0 252 252"><circle cx="126" cy="126" r="126" fill="${C.ink}"/><circle cx="28" cy="206" r="24" fill="${C.orange}"/></svg>
+     <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:${C.green}"><div style="font-size:84px;line-height:80px;font-weight:600;letter-spacing:-.06em">+500</div><div style="font-size:14px;font-weight:600;color:${C.cream};margin-top:8px">спорткоинов начислены</div></div>
+   </div>
+   <div style="margin-top:20px">${kv.map(([a,b])=>`<div class="mrow" style="padding:10px 0"><span style="font-size:14px;opacity:.7">${a}</span><span class="r" style="font-size:16px;font-weight:650">${b}</span></div>`).join('')}</div>
+   <div class="card" style="margin-top:14px;padding:14px 18px"><h3 style="margin-bottom:4px">Это не приз</h3><span class="note">Завершение даёт спорткоины. Материальная награда — отдельно, через обмен в разделе «Призы».</span></div>
+  </div>
+  <div class="cta" style="background:${C.ink};color:${C.green}">К призам</div>`};
+
+/* ---- сборка борда ---- */
+const groups=[
+ {t:'Метрики дня',d:'Один экран на метрику, у каждой свой цвет фона и своя форма. Кнопка «Ещё» и три мини-иконки переключают метрику, день закрывается любой из них.',
+  s:[['steps','Шаги · пончик','Цель пройдена: день закрыт, сверх цели растёт второй круг.'],['kcal','Калории · шарик','Осталось 120 ккал, день ещё открыт. Шарик тает по мере выполнения.'],['dist','Дистанция · уровень','65% цели. Круг наполняется как стакан, оранжевый шарик плывёт по поверхности.']]},
+ {t:'Награда и серия',d:'Закрытая метрика мгновенно даёт монеты за день и заполняет кружок в недельной серии. Здесь же видно, сколько дней осталось до бонуса.',
+  s:[['reward','День закрыт','Экран награды: какая метрика закрыла день, +50 спорткоинов, сегодняшний кружок в неделе.'],['week','Серия недели','Семь кружков по кругу. Четыре дня заполнены, до бонуса +200 остался один.'],['month','Месяц · дни кружками','Календарь из кружков. Знак внутри залитого дня подсказывает, чем он закрыт.']]},
+ {t:'Задания и челленджи',d:'Тот же язык на длинных сценариях: обложки из кругов, статусы и монеты плашками, прогресс дней кружками.',
+  s:[['tasks','Задания · доступные','Короткий вызов и длинные челленджи, вход без взноса виден уже в списке.'],['card','Челлендж · карточка','Условия и награда до начала. Открытие карточки участие не начинает.'],['active','Челлендж · активный','Дни кружками, допустимый пропуск и заметка про задержку данных.'],['done','Челлендж выполнен','Итог и +500 спорткоинов. Материальный приз идёт отдельно.']]}
+];
+let n=0;
+document.getElementById('groups').innerHTML=groups.map(g=>`<section class="group"><h2>${g.t}</h2><p>${g.d}</p><div class="row">${g.s.map(([k,name,note])=>{
+  const th={steps:'cream',kcal:'orange',dist:'green',reward:'orange',week:'cream',month:'cream',tasks:'cream',card:'cream',active:'cream',done:'green'}[k];
+  n++;return `<div class="cell"><div class="cap"><span>${String(n).padStart(2,'0')}</span><b>${name}</b><i>${note}</i></div><div class="scale"><div class="phone" style="background:${TH[th].bg};color:${TH[th].fg}">${S[k]()}</div></div></div>`}).join('')}</div></section>`).join('');
+
+/* легенда состояний кружка */
+const L=TH.cream;
+document.getElementById('states').innerHTML=[
+ [dayDot(44,0,L),'Нет данных',''],[dayDot(44,.3,L),'30%','идёт'],[dayDot(44,.75,L),'75%','почти'],
+ [dayDot(44,1,L,{g:'steps'}),'Закрыт','шагами'],[dayDot(44,1,L,{g:'kcal'}),'Закрыт','калориями'],[dayDot(44,1,L,{g:'dist'}),'Закрыт','дистанцией'],[dayDot(44,0,L,{today:1}),'Сегодня','акцент']
+].map(([s,a,b])=>`<div class="state"><span style="background:${C.cream};border-radius:50%;padding:0;display:block;line-height:0">${s}</span><b>${a}</b>${b}</div>`).join('');
+
+function fit(){document.documentElement.style.setProperty('--z',Math.min(1,(innerWidth-32)/393).toFixed(3))}
+fit();addEventListener('resize',fit);
+</script>
