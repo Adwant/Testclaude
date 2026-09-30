@@ -28,7 +28,7 @@
   --rew-bg:#FFF0BF; --rew-ic:#D99A00; --rew-t:#3F3208; --err:#DC3D26; --stack:#DCCBFF; --seg-track:#EEEDF5;
   --promo-a:#DCEBFF; --promo-b:#4F8DF5; --promo-sh:#2563EB; --av-a:#8B5CF6; --av-b:#3B82F6;
   --r-card:28px; --r-tile:22px; --r-chip:14px; --r-btn:18px; --r-sheet:32px; --r-seg:12px; --r-switch:16px; --r-row:14px;
-  --grad:1; --wstroke:rgba(255,255,255,.8); --wcm:1; --shadow-card:0 0 #0000;
+  --grad:1; --wstroke:rgba(255,255,255,.8); --wcm:1; --shadow-card:0 1px 2px rgba(16,21,28,.05),0 10px 24px -8px rgba(16,21,28,.16);
   --btn-l:56px; --btn-m:44px; --btn-s:40px;
   --bar-s:11px; --bar-l:16px; --bar-r:2px; --bar-mask:repeating-linear-gradient(90deg,#000 0 2.4px,transparent 2.4px 5.4px); --track-inset:24%;
   --seg-on-bg:var(--accent); --seg-on-ink:var(--on-accent); --seg-on-shadow:0 0 #0000; --seg-off-ink:var(--muted);
@@ -141,12 +141,9 @@ body.bare #phone{border-radius:0;box-shadow:none}
 .t{font-family:var(--font);white-space:pre-wrap;margin:0;flex:none}
 .t.nw{white-space:pre}
 .t.tr{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fxs,.fxk{box-shadow:var(--st,0 0 #0000),var(--fxv,0 0 #0000)}
-.n:not(.fxs):not(.fxk):not(.wc){box-shadow:var(--st,0 0 #0000)}
-[data-theme=sportika] .fxs{--fxv:var(--fxs)}
-.fxk{--fxv:var(--fxs)}
-[data-theme=vk] .wc,[data-theme=alfa] .wc{box-shadow:var(--st,0 0 #0000),var(--shadow-card)}
-.wc{box-shadow:var(--st,0 0 #0000)}
+.n{box-shadow:var(--st),var(--fxv)}
+[data-theme=sportika] .fxs,.fxk{--fxv:var(--fxs)}
+.wc{--fxv:var(--shadow-card)}
 .act{cursor:pointer;transition:transform .18s var(--ease),filter .18s}
 .act:active{transform:scale(.985);filter:brightness(.97)}
 .hint .act{outline:1.5px dashed rgba(109,40,217,.85);outline-offset:-1px}
@@ -221,7 +218,8 @@ function radCSS(n){
 }
 function isWhiteCard(n,ctx){
   if(n.k!=='F'||ctx.inWC||!n.f||n.f.length!==1)return false;
-  const p=n.f[0];if(p.t!=='S'||p.v!=='surface'||(p.o!=null&&p.o<.6))return false;
+  const p=n.f[0];if(p.t==='G'){if(!p.s||p.s[0].v!=='surface'||p.s[0].a!=null)return false;}
+  else if(p.t!=='S'||p.v!=='surface'||(p.o!=null&&p.o<.6))return false;
   if(n.w<90||n.h<56||n.r==null&&!n.rv)return false;
   if(/^(шторка|модалка|системная|сегмент|кнопка|статус|таб|оверлей|иконка|круг|контент|ручка)/.test(n.n))return false;
   return true;
@@ -237,7 +235,7 @@ function sizeCSS(n,par){
     const pS=H?n.sh:n.sv, cS=H?n.sv:n.sh;
     const pd=H?'width':'height', cd=H?'height':'width';
     if(pS==='X')s.push(`${pd}:${H?n.w:n.h}px`);
-    else if(pS==='F')s.push('flex:1 1 0;min-'+pd+':0');
+    else if(pS==='F')s.push(H?'flex:1 1 0;min-width:0':`flex:1 1 auto;min-height:${n.h}px`);
     // counter axis
     if(cS==='X')s.push(`${cd}:${H?n.h:n.w}px`);
     else if(cS==='F')s.push('align-self:stretch');
