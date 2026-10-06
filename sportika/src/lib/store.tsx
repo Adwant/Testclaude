@@ -120,10 +120,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     navRef.current = next;
     setNav(next);
     if (delta > 0) {
-      for (let i = 0; i < delta; i++) history.pushState({ sportika: depth(prev) + i + 1 }, '');
+      try {
+        for (let i = 0; i < delta; i++) history.pushState({ sportika: depth(prev) + i + 1 }, '');
+      } catch {
+        /* встроенный просмотр может запрещать History API — навигация работает и без него */
+      }
     } else if (delta < 0) {
-      skipPop.current += 1;
-      history.go(delta);
+      try {
+        skipPop.current += 1;
+        history.go(delta);
+      } catch {
+        skipPop.current -= 1;
+      }
     }
   }, []);
 
