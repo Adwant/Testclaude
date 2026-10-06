@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f6f9" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <title>Спортика · Стили</title>
+  </head>
+  <body class="splash">
+    <main class="splash__wrap">
+      <header class="splash__head">
+        <span class="splash__logo" aria-hidden="true">
+          <svg width="30" height="30" viewBox="12 0 32 56"><path fill="#fffffe" d="M24.52 .86C24.9 .32 25.52 0 26.18 0H41.08C42.2 0 43.11 .91 43.11 2.03V8.24C43.11 8.55 43.04 8.85 42.9 9.13L38.9 17.33C38.57 18.01 39.06 18.79 39.81 18.79H41.08C42.2 18.79 43.11 19.7 43.11 20.82V28.71C43.11 29.3 42.85 29.86 42.41 30.24L16.19 53.07C14.88 54.21 12.83 53.28 12.83 51.54V47.37C12.83 46.84 13.04 46.32 13.42 45.94L27.93 31.37C28.57 30.73 28.11 29.64 27.21 29.64H14.86C13.74 29.64 12.83 28.73 12.83 27.61V18.02C12.83 17.6 12.96 17.19 13.2 16.85L24.52 .86Z"/></svg>
+        </span>
+        <div>
+          <p class="splash__kicker">Спортика · прототип</p>
+          <h1>Выберите стиль</h1>
+        </div>
+      </header>
+      <p class="splash__lead">Два визуальных направления одного продукта. Откройте на телефоне — интерфейс рассчитан на ширину от 375&nbsp;px.</p>
+
+      <a class="style-card style-card--one" href="./1/">
+        <span class="style-card__art">
+          <img src="./src/assets/3d/sneaker.webp" alt="" width="180" height="180" />
+        </span>
+        <span class="style-card__body">
+          <span class="style-card__num">Стиль 1</span>
+          <span class="style-card__title">Мягкий и светлый</span>
+          <span class="style-card__text">Пастельные карточки, 3D-объекты, шрифт Onest</span>
+          <span class="style-card__cta">Открыть <svg width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" d="M6.65 4.98c.19-.2.51-.2.7 0l2.67 2.67c.2.19.2.51 0 .7l-2.67 2.67a.5.5 0 0 1-.7-.7L8.96 8 6.65 5.69a.5.5 0 0 1 0-.71Z"/></svg></span>
+        </span>
+      </a>
+
+      <a class="style-card style-card--two" href="./2/">
+        <span class="style-card__art style-card__art--two">
+          <img src="./src/assets/3d/crystal.webp" alt="" width="150" height="150" />
+        </span>
+        <span class="style-card__body">
+          <span class="style-card__num">Стиль 2</span>
+          <span class="style-card__title">Второе направление</span>
+          <span class="style-card__text">Появится здесь, когда будет готов</span>
+          <span class="style-card__cta">Перейти <svg width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" d="M6.65 4.98c.19-.2.51-.2.7 0l2.67 2.67c.2.19.2.51 0 .7l-2.67 2.67a.5.5 0 0 1-.7-.7L8.96 8 6.65 5.69a.5.5 0 0 1 0-.71Z"/></svg></span>
+        </span>
+      </a>
+    </main>
+    <script type="module" src="./src/splash.ts"></script>
+  </body>
+</html>

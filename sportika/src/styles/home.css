@@ -1,0 +1,375 @@
+/* ───────────── Плитки метрик ───────────── */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 8px;
+  height: 140px;
+  padding: 14px;
+  border-radius: var(--r-tile);
+  text-align: left;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid #fff;
+  box-shadow: var(--shadow-tile);
+  min-width: 0;
+}
+.tile--lead,
+.tile--tinted,
+.tile--faded {
+  background: linear-gradient(128deg, var(--p-bg1), var(--p-bg2));
+  color: var(--p-text);
+}
+.tile--lead {
+  box-shadow: 0 12px 24px -6px rgba(var(--p-shadow), 0.24);
+}
+.tile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.tile__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--p-tint);
+  color: var(--p-accent);
+  flex-shrink: 0;
+}
+.tile__icon.is-white {
+  background: var(--surface);
+}
+.tile__pct {
+  padding: 2px 7px;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+  background: rgba(108, 114, 128, 0.12);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.tile__pct.is-lead {
+  background: var(--surface);
+  color: var(--p-accent);
+}
+.tile__value {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.tile__num {
+  white-space: nowrap;
+}
+.tile__label,
+.tile__of {
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tile--lead .tile__label,
+.tile--lead .tile__of,
+.tile--tinted .tile__label,
+.tile--tinted .tile__of,
+.tile--faded .tile__label,
+.tile--faded .tile__of {
+  color: inherit;
+  opacity: 0.85;
+}
+.tile--skel {
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Узкие экраны (≤ 360px): числа чуть компактнее, чтобы «12 400» не упиралось в край */
+@media (max-width: 360px) {
+  .tiles { gap: 8px; }
+  .tile { padding: 12px; }
+  .tile__num { font-size: 20px; letter-spacing: -0.6px; }
+}
+
+/* ───────────── Карточка цели ───────────── */
+.goal {
+  gap: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.goal.card--pal {
+  box-shadow: 0 12px 26px -10px rgba(var(--p-shadow), 0.16);
+}
+.goal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 27px;
+}
+.goal__title {
+  color: var(--p-text);
+}
+.goal__value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.goal__big {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  row-gap: 0;
+}
+.goal__pct {
+  white-space: nowrap;
+}
+.goal__cap,
+.goal__sub,
+.goal__bonus-text {
+  color: var(--p-text);
+}
+.goal__cap {
+  opacity: 0.85;
+}
+.goal__bonus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.goal--revoked {
+  color: var(--text);
+}
+.goal--revoked .goal__title {
+  color: var(--text-2);
+}
+.goal--skel {
+  background: rgba(255, 255, 255, 0.7);
+}
+.chip--dark {
+  background: rgba(16, 21, 28, 0.06);
+  color: var(--text);
+}
+.chip--lock {
+  color: var(--text-2);
+}
+
+.gscale {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 16px;
+}
+.gscale__t {
+  display: block;
+  width: 3px;
+  height: 12px;
+  border-radius: 1.5px;
+  opacity: 0.45;
+  transform: scaleY(0.35);
+  transform-origin: 50% 50%;
+  transition:
+    transform 0.5s var(--ease-out),
+    opacity 0.5s var(--ease-out),
+    height 0.5s var(--ease-out);
+  transition-delay: calc(var(--i) * 12ms);
+}
+.gscale.is-ready .gscale__t {
+  transform: scaleY(1);
+}
+.gscale.is-ready .gscale__t.is-on {
+  height: 16px;
+  opacity: 1;
+}
+
+/* ───────────── Дни недели ───────────── */
+.weekdays {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 2px;
+}
+.wday {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--p-text);
+  min-width: 32px;
+}
+.wday__c {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.wday--done .wday__c {
+  background: var(--p-accent);
+  color: #fff;
+  box-shadow: 0 4px 10px -4px rgba(var(--p-shadow), 0.5);
+}
+.wday--miss .wday__c {
+  background: var(--p-tint);
+  color: rgba(16, 21, 28, 0.35);
+}
+.wday--wait .wday__c {
+  background: rgba(217, 154, 0, 0.14);
+  color: #d99a00;
+}
+.wday--empty .wday__c {
+  background: rgba(16, 21, 28, 0.05);
+}
+.wday--today .wday__c {
+  border: 2px solid var(--p-accent);
+  color: var(--p-text);
+}
+.goal--revoked .wday {
+  color: var(--text-2);
+}
+.goal--revoked .wday--today .wday__c {
+  border-color: rgba(16, 21, 28, 0.25);
+}
+
+/* ───────────── Стопка вызовов ───────────── */
+.counter-chip {
+  padding: 5px 12px;
+}
+.chev-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-2);
+}
+.cstack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cstack.is-collapsed {
+  cursor: pointer;
+}
+.ccard {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-card);
+  color: var(--text);
+}
+.ccard.is-accepted {
+  background: linear-gradient(154deg, var(--p-bg1), var(--p-bg2));
+  color: var(--p-text);
+  box-shadow: 0 12px 26px -10px rgba(109, 40, 217, 0.2);
+}
+.ccard.is-behind {
+  box-shadow: 0 6px 14px -8px rgba(109, 40, 217, 0.25);
+}
+.ccard.is-faded .ccard__body {
+  opacity: 0.55 !important;
+}
+.ccard__veil {
+  position: absolute;
+  inset: 0;
+  background: var(--stack-card);
+  pointer-events: none;
+  z-index: 1;
+}
+.ccard__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+.ccard__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ccard__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(109, 40, 217, 0.12);
+  color: #6d28d9;
+}
+.ccard__icon.is-white {
+  background: var(--surface);
+}
+.ccard__kicker {
+  opacity: 0.85;
+}
+.ccard__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ccard__clock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ───────────── Карусель челленджей ───────────── */
+.carousel {
+  display: flex;
+  gap: 10px;
+  margin: 0 calc(var(--pad-screen) * -1);
+  padding: 4px var(--pad-screen) 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--pad-screen);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+.chcard {
+  flex: 0 0 232px;
+  height: 196px;
+  scroll-snap-align: start;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--r-tile);
+  cursor: pointer;
+}
+.chcard__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.chcard__status {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+  min-height: 0;
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}

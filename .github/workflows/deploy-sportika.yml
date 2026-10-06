@@ -1,0 +1,42 @@
+name: Deploy Sportika styles
+
+# Собирает sportika/ и выкладывает на сервер в папку /styles/.
+# Нужны секреты репозитория: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY, DEPLOY_PATH
+# (DEPLOY_PATH — каталог, который отдаётся по https://sportika.estvkus.ru/styles/).
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'sportika/**'
+      - '.github/workflows/deploy-sportika.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_SECRETS: ${{ secrets.DEPLOY_HOST != '' }}
+    defaults:
+      run:
+        working-directory: sportika
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sportika/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Upload to server
+        if: ${{ env.HAS_SECRETS == 'true' }}
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+          # --exclude '2/' — не трогаем второй стиль, если он уже лежит рядом
+          rsync -az --delete --exclude '2/' -e "ssh -i ~/.ssh/id_deploy" dist/ "$USER@$HOST:$TARGET/"

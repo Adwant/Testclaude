@@ -1,0 +1,1036 @@
+/* ───────────── База ───────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: #dfe2ea;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, p, ol, ul {
+  margin: 0;
+  padding: 0;
+}
+ul, ol {
+  list-style: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+input {
+  font: inherit;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 430px;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(115deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  --tabbar-h: calc(54px + max(var(--sab), 12px));
+}
+
+/* Десктоп: показываем приложение в рамке телефона, чтобы удобно смотреть макет. */
+@media (min-width: 640px) and (min-height: 760px) {
+  body {
+    background: radial-gradient(1200px 700px at 30% 10%, #eef0f6, #d7dbe4);
+  }
+  .app {
+    --sat: 44px;
+    --sab: 22px;
+    width: 393px;
+    height: min(852px, calc(100% - 48px));
+    border-radius: 52px;
+    box-shadow:
+      0 0 0 10px #10151c,
+      0 0 0 11px #2b313b,
+      0 50px 90px -30px rgba(16, 24, 40, 0.55);
+  }
+  .app::before {
+    content: '';
+    position: absolute;
+    z-index: 100;
+    top: 11px;
+    left: 50%;
+    width: 120px;
+    height: 34px;
+    border-radius: 20px;
+    background: #10151c;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+}
+
+/* ───────────── Слои навигации ───────────── */
+.layer {
+  position: absolute;
+  inset: 0;
+}
+.stack-screen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  box-shadow: -18px 0 40px -24px rgba(16, 24, 40, 0.35);
+  will-change: transform;
+}
+.stack-dim {
+  position: absolute;
+  inset: 0;
+  background: #10151c;
+  pointer-events: none;
+  z-index: 2;
+}
+.edge-swipe {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 18px;
+  touch-action: none;
+}
+
+/* ───────────── Экран ───────────── */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.screen__scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+.screen__scroll::-webkit-scrollbar {
+  display: none;
+}
+.screen__content {
+  display: flex;
+  flex-direction: column;
+  padding: 8px var(--pad-screen) 0;
+  min-height: 100%;
+}
+.screen__content.no-top {
+  padding-top: calc(var(--sat) + 12px);
+}
+.screen__content.is-center {
+  justify-content: center;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: calc(var(--sat) + 12px) var(--pad-screen) 10px;
+  transition: background-color 0.25s, box-shadow 0.25s;
+}
+.topbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background: rgba(243, 244, 248, 0.9);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow: 0 1px 0 rgba(16, 21, 28, 0.06);
+  transition: opacity 0.25s;
+}
+.topbar.is-scrolled::before {
+  opacity: 1;
+}
+
+.dock {
+  position: absolute;
+  z-index: 15;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 28px var(--pad-screen) calc(max(var(--sab), 14px) + 6px);
+  background: linear-gradient(to top, var(--bg-base-2) 62%, rgba(237, 239, 244, 0));
+  pointer-events: none;
+}
+.dock > * {
+  pointer-events: auto;
+}
+.dock--tabs {
+  bottom: var(--tabbar-h);
+  padding-bottom: 12px;
+}
+.dock__note {
+  text-align: center;
+  color: var(--text-2);
+}
+
+/* ───────────── Шапки ───────────── */
+.home-head,
+.page-head,
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+.home-head__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.home-head__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.page-head__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.navbar__title {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.navbar__large {
+  flex: 1;
+  min-width: 0;
+}
+.navbar__right {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 44px;
+}
+
+.round-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 6px 14px -6px rgba(16, 24, 40, 0.12);
+}
+.round-btn--s {
+  width: 36px;
+  height: 36px;
+}
+.round-btn--dark {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-button);
+}
+
+.avatar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--avatar-1), var(--avatar-2));
+  box-shadow: 0 6px 14px -4px rgba(59, 130, 246, 0.4);
+}
+
+.balance {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 14px 0 12px;
+  border-radius: 22px;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 10px 18px -8px rgba(16, 21, 28, 0.45);
+}
+.balance__bolt {
+  display: inline-flex;
+}
+
+/* ───────────── Таб-бар ───────────── */
+.tabbar {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  padding: 8px 8px max(var(--sab), 12px);
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  box-shadow:
+    0 -1px 0 rgba(16, 21, 28, 0.06),
+    0 -6px 20px -8px rgba(16, 24, 40, 0.08);
+}
+.tab {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 4px;
+  color: rgba(16, 21, 28, 0.24);
+}
+.tab__icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+}
+.tab__label {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.tab.is-active {
+  color: var(--accent);
+}
+.tab.is-active .tab__label {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ───────────── Кнопки ───────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  white-space: nowrap;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 0.25s, color 0.25s, box-shadow 0.25s;
+}
+.btn > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn--full {
+  width: 100%;
+}
+.btn--l {
+  height: 56px;
+  border-radius: var(--r-button);
+  font-size: 15px;
+  line-height: 20px;
+}
+.btn--s {
+  height: 40px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 17px;
+  padding: 0 14px;
+}
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-button);
+}
+.btn--secondary {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 8px 18px -8px rgba(16, 24, 40, 0.12);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+}
+.btn--l.btn--ghost {
+  height: 48px;
+}
+.btn--tint {
+  background: rgba(109, 40, 217, 0.12);
+  color: #6d28d9;
+}
+.btn--disabled {
+  background: rgba(16, 21, 28, 0.06);
+  color: var(--text-2);
+  cursor: default;
+}
+.btn--danger {
+  background: var(--error);
+  color: #fff;
+  box-shadow: 0 10px 20px -6px rgba(220, 61, 38, 0.45);
+}
+
+/* ───────────── Чипы ───────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px 5px 10px;
+  border-radius: var(--r-chip);
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.chip--s {
+  padding: 3px 9px 3px 7px;
+  font-size: 11px;
+  line-height: 14px;
+  gap: 4px;
+  border-radius: 10px;
+}
+.chip--reward {
+  background: var(--reward-bg);
+  color: var(--reward-text);
+  box-shadow: inset 0 0 0 1px #fff;
+}
+.chip--ok {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+.chip--wait {
+  background: rgba(217, 154, 0, 0.14);
+  color: #b17d00;
+}
+.chip--err {
+  background: rgba(220, 61, 38, 0.12);
+  color: var(--error);
+}
+.chip--muted {
+  background: rgba(108, 114, 128, 0.12);
+  color: var(--text-2);
+}
+.chip--purple {
+  background: rgba(109, 40, 217, 0.12);
+  color: #6d28d9;
+}
+.chip--blue {
+  background: rgba(29, 78, 216, 0.1);
+  color: #1d4ed8;
+}
+.chip--white {
+  background: var(--surface);
+  color: var(--p-accent, var(--text));
+}
+
+/* ───────────── Карточки ───────────── */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--r-card-s);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-card);
+  min-width: 0;
+}
+.card--l {
+  padding: var(--pad-card);
+  border-radius: var(--r-card);
+}
+.card--pal {
+  background: linear-gradient(141deg, var(--p-bg1) 0%, var(--p-bg2) 100%);
+  color: var(--p-text);
+  box-shadow: 0 12px 26px -10px rgba(var(--p-shadow), 0.18);
+}
+.is-tappable {
+  cursor: pointer;
+}
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ───────────── Плашки ───────────── */
+.banner {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 20px;
+}
+.banner__icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+.banner__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 4px;
+}
+.banner__text {
+  opacity: 0.8;
+}
+.banner--info { background: rgba(29, 78, 216, 0.1); color: #12306e; }
+.banner--info .banner__icon { background: rgba(29, 78, 216, 0.14); color: #1d4ed8; }
+.banner--ok { background: rgba(22, 163, 74, 0.1); color: #12532c; }
+.banner--ok .banner__icon { background: rgba(22, 163, 74, 0.14); color: #16a34a; }
+.banner--wait { background: rgba(217, 154, 0, 0.1); color: #3f3208; }
+.banner--wait .banner__icon { background: rgba(217, 154, 0, 0.14); color: #d99a00; }
+.banner--err { background: rgba(220, 61, 38, 0.1); color: #7a1b1b; }
+.banner--err .banner__icon { background: rgba(220, 61, 38, 0.14); color: var(--error); }
+.banner--neutral { background: rgba(16, 21, 28, 0.06); color: var(--text); }
+.banner--neutral .banner__icon { background: rgba(16, 21, 28, 0.1); color: var(--text); }
+.banner--neutral .banner__text { color: var(--text-2); opacity: 1; }
+
+/* ───────────── Таблица ───────────── */
+.kv {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.kv__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.kv__k {
+  flex: 0 1 46%;
+  min-width: 0;
+}
+.kv__v {
+  flex: 1 1 54%;
+  min-width: 0;
+  text-align: right;
+}
+.kv--box {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(16, 21, 28, 0.04);
+}
+
+/* ───────────── Иконка в квадрате ───────────── */
+.iconbox {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--p-tint);
+  color: var(--p-accent);
+}
+.iconbox--solid {
+  background: var(--p-accent);
+  color: #fff;
+}
+.iconbox--white {
+  background: var(--surface);
+  color: var(--p-accent);
+}
+
+/* ───────────── Штрихи ───────────── */
+.ticks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 11px;
+  width: 100%;
+}
+.tick {
+  display: block;
+  flex-shrink: 0;
+  width: 2px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: currentColor;
+  opacity: 0.35;
+  transition:
+    height 0.45s var(--ease-out),
+    opacity 0.45s var(--ease-out),
+    width 0.3s;
+  transition-delay: calc(var(--i) * 9ms);
+}
+.ticks.is-ready .tick--on {
+  height: 7px;
+  opacity: 1;
+}
+.ticks.is-ready .tick--cap {
+  height: 11px;
+  width: 3px;
+  opacity: 1;
+}
+
+/* ───────────── Сегменты ───────────── */
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(16, 21, 28, 0.06);
+}
+.segmented__item {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  border-radius: var(--r-segment);
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: color 0.25s;
+}
+.segmented__item.is-active {
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.segmented__thumb {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-segment);
+  background: var(--accent);
+  box-shadow: 0 6px 12px -4px rgba(16, 21, 28, 0.3);
+}
+.segmented__label {
+  position: relative;
+  white-space: nowrap;
+}
+
+/* ───────────── Переключатель ───────────── */
+.toggle {
+  width: 51px;
+  height: 31px;
+  flex-shrink: 0;
+  padding: 2px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: flex-start;
+  background: rgba(120, 120, 128, 0.2);
+  transition: background-color 0.25s;
+}
+.toggle.is-on {
+  background: #16a34a;
+  justify-content: flex-end;
+}
+.toggle__knob {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+}
+
+/* ───────────── Строки ───────────── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+}
+.row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.row__chev {
+  color: var(--text-2);
+}
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+.rows > * + * {
+  border-top: 1px solid rgba(16, 21, 28, 0.06);
+}
+.rows > * {
+  padding: 10px 0;
+}
+.rows > *:first-child {
+  padding-top: 0;
+}
+.rows > *:last-child {
+  padding-bottom: 0;
+}
+
+/* ───────────── Шаги и списки ───────────── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.steps li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.steps__num {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.checklist li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.checklist__mark {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.checklist--ok .checklist__mark { background: rgba(22, 163, 74, 0.14); color: #16a34a; }
+.checklist--no .checklist__mark { background: rgba(16, 21, 28, 0.06); color: var(--text-2); }
+.checklist--no .t-small { color: var(--text-2); }
+
+/* ───────────── Разделы ───────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 4px;
+  min-height: 26px;
+}
+.see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ───────────── Пустые состояния ───────────── */
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 24px 0;
+}
+.empty .t-body {
+  max-width: 300px;
+}
+.empty > div:last-child {
+  margin-top: 14px;
+}
+
+/* ───────────── Оверлеи ───────────── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+}
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 21, 28, 0.38);
+}
+.backdrop--blur {
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - var(--sat) - 12px);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  background: linear-gradient(115deg, var(--bg-base) 0%, var(--bg-base-2) 100%);
+  box-shadow: var(--shadow-sheet);
+}
+.sheet::after {
+  /* продолжение фона под пружинящей шторкой */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 200px;
+  background: var(--bg-base-2);
+}
+.sheet--tall {
+  height: calc(100% - var(--sat) - 12px);
+}
+.sheet__grab {
+  flex-shrink: 0;
+  padding: 10px 24px 0;
+  cursor: grab;
+}
+.sheet__handle {
+  display: block;
+  width: 36px;
+  height: 5px;
+  margin: 0 auto;
+  border-radius: 3px;
+  background: rgba(16, 21, 28, 0.15);
+}
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0 4px;
+  min-height: 44px;
+}
+.sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 24px calc(max(var(--sab), 16px) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: none;
+}
+.sheet__body::-webkit-scrollbar { display: none; }
+.sheet__footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 24px calc(max(var(--sab), 14px) + 6px);
+}
+.sheet__footer + .sheet__body,
+.sheet__body:has(+ .sheet__footer) {
+  padding-bottom: 8px;
+}
+
+.overlay--dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--sat) + 12px) 20px calc(var(--sab) + 12px);
+}
+.dialog {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px 20px 12px;
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: 0 30px 60px -20px rgba(16, 24, 40, 0.4);
+}
+.dialog__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+/* ───────────── Тост ───────────── */
+.toast {
+  position: absolute;
+  z-index: 80;
+  left: 20px;
+  right: 20px;
+  top: calc(var(--sat) + 8px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(16, 21, 28, 0.92);
+  color: #fff;
+  box-shadow: 0 16px 30px -12px rgba(16, 21, 28, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* ───────────── Скелетоны ───────────── */
+.skel {
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(16, 21, 28, 0.06) 0%, rgba(16, 21, 28, 0.1) 40%, rgba(16, 21, 28, 0.06) 80%);
+  background-size: 300% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ───────────── Лёгкие анимации иконок ───────────── */
+.icon-wiggle {
+  animation: wiggle 3.6s ease-in-out 0.8s infinite;
+  transform-origin: 50% 70%;
+}
+@keyframes wiggle {
+  0%, 84%, 100% { transform: rotate(0); }
+  88% { transform: rotate(-10deg); }
+  92% { transform: rotate(8deg); }
+  96% { transform: rotate(-4deg); }
+}
+.icon-flicker {
+  animation: flicker 2.4s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@keyframes flicker {
+  0%, 100% { transform: scale(1) rotate(0); }
+  30% { transform: scale(1.08, 0.94) rotate(-3deg); }
+  60% { transform: scale(0.95, 1.07) rotate(2deg); }
+}
+.icon-step {
+  animation: step 2.8s ease-in-out infinite;
+}
+@keyframes step {
+  0%, 70%, 100% { transform: translateY(0); }
+  78% { transform: translateY(-2px) rotate(-6deg); }
+  86% { transform: translateY(0) rotate(0); }
+}
+.icon-pin {
+  animation: pin 3s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+@keyframes pin {
+  0%, 70%, 100% { transform: translateY(0); }
+  80% { transform: translateY(-3px); }
+  90% { transform: translateY(0) scale(1.06, 0.94); }
+}
+.icon-ring {
+  animation: ring 4s ease-in-out 1s infinite;
+  transform-origin: 50% 15%;
+}
+@keyframes ring {
+  0%, 80%, 100% { transform: rotate(0); }
+  84% { transform: rotate(14deg); }
+  88% { transform: rotate(-12deg); }
+  92% { transform: rotate(8deg); }
+  96% { transform: rotate(-4deg); }
+}
+.spk-shine {
+  animation: shine 3.2s ease-in-out infinite;
+}
+@keyframes shine {
+  0%, 75%, 100% { filter: brightness(1); transform: scale(1); }
+  85% { filter: brightness(1.25); transform: scale(1.12) rotate(-6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ───────────── Утилиты ───────────── */
+.stack-v { display: flex; flex-direction: column; }
+.gap-2 { gap: 2px; }
+.gap-4 { gap: 4px; }
+.gap-6 { gap: 6px; }
+.gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.hstack { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.wrap { flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.grow { flex: 1; min-width: 0; }
+.center { text-align: center; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.link-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0;
+  align-self: flex-start;
+}
+.hero-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-card);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: linear-gradient(141deg, var(--p-bg1), var(--p-bg2));
+  box-shadow: 0 16px 32px -14px rgba(var(--p-shadow), 0.25);
+  overflow: hidden;
+}

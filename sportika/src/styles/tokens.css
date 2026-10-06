@@ -1,0 +1,77 @@
+/* Sportika · Tokens — перенесены из переменных Figma (коллекция «Sportika · Tokens») */
+:root {
+  /* Фон и поверхности */
+  --bg-base: #f5f6f9;
+  --bg-base-2: #edeff4;
+  --surface: #ffffff;
+  --text: #10151c;
+  --text-2: #6c7280;
+  --accent: #10151d;
+  --on-accent: #fffffe;
+  --error: #dc3d26;
+  --segment-track: #eeedf5;
+  --stack-card: #dccbff;
+
+  /* Награда */
+  --reward-bg: #fff0bf;
+  --reward-icon: #d99a00;
+  --reward-text: #3f3208;
+
+  /* Аватар */
+  --avatar-1: #8b5cf6;
+  --avatar-2: #3b82f6;
+
+  /* Радиусы */
+  --r-card: 28px;
+  --r-tile: 22px;
+  --r-card-s: 24px;
+  --r-chip: 14px;
+  --r-button: 18px;
+  --r-sheet: 32px;
+  --r-segment: 12px;
+  --r-row: 14px;
+
+  /* Отступы */
+  --pad-screen: 20px;
+  --pad-card: 18px;
+  --pad-block: 16px;
+  --pad-inner: 12px;
+  --pad-tight: 8px;
+
+  /* Тени */
+  --shadow-card: 0 8px 18px -8px rgba(16, 24, 40, 0.06);
+  --shadow-tile: 0 6px 14px -6px rgba(16, 24, 40, 0.05);
+  --shadow-button: 0 10px 20px -6px rgba(16, 21, 28, 0.24);
+  --shadow-sheet: 0 -8px 40px -10px rgba(16, 24, 40, 0.2);
+
+  /* Типографика */
+  --font: 'Onest', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+
+  /* Безопасные зоны (на десктопе переопределяются под рамку телефона) */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+
+  /* Кривые анимаций */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Типографическая шкала (Onest) */
+.t-display { font-size: 44px; line-height: 48px; font-weight: 600; letter-spacing: -1.6px; }
+.t-h1 { font-size: 28px; line-height: 32px; font-weight: 600; letter-spacing: -0.8px; }
+.t-h2 { font-size: 22px; line-height: 26px; font-weight: 600; letter-spacing: -0.5px; }
+.t-h3 { font-size: 18px; line-height: 22px; font-weight: 600; letter-spacing: -0.3px; }
+.t-body { font-size: 15px; line-height: 20px; font-weight: 500; }
+.t-body-s { font-size: 15px; line-height: 20px; font-weight: 600; }
+.t-small { font-size: 13px; line-height: 17px; font-weight: 500; }
+.t-small-s { font-size: 13px; line-height: 17px; font-weight: 600; }
+.t-cap { font-size: 11px; line-height: 14px; font-weight: 500; }
+.t-cap-s { font-size: 11px; line-height: 14px; font-weight: 600; }
+.c-2 { color: var(--text-2); }
+.c-err { color: var(--error); }
+.c-ok { color: #16a34a; }
+.c-warn { color: #d99a00; }
+.c-reward { color: #d99a00; }
+.c-purple { color: #6d28d9; }
+.c-blue { color: #1d4ed8; }
+.tnum { font-variant-numeric: tabular-nums; }
